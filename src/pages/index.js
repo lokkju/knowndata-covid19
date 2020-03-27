@@ -1,5 +1,4 @@
 import React from "react"
-import { Link } from "gatsby-theme-material-ui";
 import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { makeStyles } from '@material-ui/core/styles';

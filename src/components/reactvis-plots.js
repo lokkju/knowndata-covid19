@@ -55,6 +55,7 @@ function InternalReactvisPlots ({region}) {
         isLoaded(false);
         fetchMyAPI();
         return () => { didCancel = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [region]); // Only re-run the effect if count changes
 
     if (error) {
