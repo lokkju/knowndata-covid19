@@ -29,7 +29,7 @@ const IndexPage = ({ data }) => {
     const classes = useStyles();
 
     const [regionOne,setRegionOne] = useState("US")
-    const [regionTwo,setRegionTwo] = useState("US")
+    const [regionTwo,setRegionTwo] = useState("WA")
     return (
         <Layout>
             <SEO title="Home" />
@@ -50,12 +50,12 @@ const IndexPage = ({ data }) => {
                     </AppBar>
                     <Grid item xs={12} sm={6}>
                         <Paper className={classes.paper}>
-                            <ReactvisPlots region={"US"}/>
+                            <ReactvisPlots region={regionOne}/>
                         </Paper>
                     </Grid>
                     <Grid item xs={12} sm={6}>
                         <Paper className={classes.paper}>
-                            <ReactvisPlots region={"WA"}/>
+                            <ReactvisPlots region={regionTwo}/>
                         </Paper>
                     </Grid>
                 </Grid>

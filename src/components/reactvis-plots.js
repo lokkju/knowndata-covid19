@@ -33,11 +33,11 @@ function ReactvisPlots ({region}) {
     const displayFormat = timeFormat("%Y-%m-%d");
     const FlexibleGraph = makeVisFlexible(XYPlot);
 
-    const regionName = () => {
-        if( region === "US") {
+    const regionName = (r) => {
+        if( r === "US") {
             return "United States";
         } else {
-            return states.find(x => x.abbreviation === region).name
+            return states.find(x => x.abbreviation === r).name
         }
     };
     useEffect( () => {
@@ -93,7 +93,7 @@ function ReactvisPlots ({region}) {
                     xType={"time"}
                 >
                     <ChartLabel
-                        text={"Data for " + regionName()}
+                        text={"Data for " + regionName(region)}
                         className="region-name-label"
                         xPercent={0.025}
                         yPercent={0.25}
