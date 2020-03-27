@@ -2,22 +2,27 @@ import React,  { useState, useEffect }  from "react"
 
 import {timeParse,timeFormat} from "d3-time-format";
 import { format } from "d3-format";
-import {XYPlot, LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, Crosshair, ChartLabel} from 'react-vis';
+import {XYPlot, LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, Crosshair, makeVisFlexible} from 'react-vis';
 
 import '../../node_modules/react-vis/dist/style.css';
+import StateSelector from "./us-region-selector";
 
-function ReactvisPlots ({cturl}) {
+function InternalReactvisPlots ({region}) {
     const [crosshairValue, setCrosshairValue] = useState([]);
     const [data,setData] = useState([]);
     const [loaded,isLoaded] = useState(false);
     const [error,setError] = useState();
     const parseFormat = timeParse("%Y%m%d");
     const displayFormat = timeFormat("%Y-%m-%d");
-
+    const FlexibleGraph = makeVisFlexible(XYPlot);
 
     useEffect( () => {
         let didCancel = false;
-
+        let cturl = "https://covidtracking.com/api/us/daily";
+        console.log(region);
+        if(region !== "" && region !== "US") {
+            cturl = "https://covidtracking.com/api/states/daily?state=" + region;
+        }
         async function fetchMyAPI() {
             try {
                 const response = await fetch(cturl);
@@ -25,6 +30,7 @@ function ReactvisPlots ({cturl}) {
                     throw Error(response.statusText);
                 }
                 const json = await response.json();
+                console.log(json);
                 if (!didCancel) { // Ignore if we started fetching something else
                     const d = [
                         json.map((n) => {return {"x": parseFormat(n.date), "y": n.total}}),
@@ -40,22 +46,24 @@ function ReactvisPlots ({cturl}) {
                     console.log(d);
                     isLoaded(true);
                 }
-            } catch (error) {
-                console.log(error);
+            } catch (e) {
+                setError(e)
+                console.log(e);
             }
         }
 
         isLoaded(false);
         fetchMyAPI();
         return () => { didCancel = true; };
-    }, [cturl]); // Only re-run the effect if count changes
+    }, [region]); // Only re-run the effect if count changes
 
-    if (loaded) {
+    if (error) {
+        return (<div><strong>Error:</strong><pre>{error}</pre></div>)
+    } else if (loaded) {
         return (
             <div>
-                <XYPlot
+                <FlexibleGraph
                     onMouseLeave={() => setCrosshairValue([])}
-                    width={450}
                     height={300}
                     margin={{"bottom": 10, "top": 40}}
                     xType={"time"}
@@ -99,14 +107,13 @@ function ReactvisPlots ({cturl}) {
                                    ]
                                }}
                     />
-                </XYPlot>
-                <XYPlot
+                </FlexibleGraph>
+                <FlexibleGraph
                     onMouseLeave={() => setCrosshairValue([])}
-                    width={450}
                     height={150}
                     margin={{"bottom": 10, "top": 10}}
                     xType={"time"}
-                    yDomain={[0,0.2]}
+                    yDomain={[0,0.5]}
                 >
                     <VerticalGridLines/>
                     <HorizontalGridLines/>
@@ -128,14 +135,13 @@ function ReactvisPlots ({cturl}) {
                                    ]
                                }}
                     />
-                </XYPlot>
-                <XYPlot
+                </FlexibleGraph>
+                <FlexibleGraph
                     onMouseLeave={() => setCrosshairValue([])}
-                    width={450}
                     height={150}
                     margin={{"top": 10}}
                     xType={"time"}
-                    yDomain={[0,0.03]}
+                    yDomain={[0,0.05]}
                 >
                     <VerticalGridLines/>
                     <HorizontalGridLines/>
@@ -165,7 +171,7 @@ function ReactvisPlots ({cturl}) {
                                    ]
                                }}
                     />
-                </XYPlot>
+                </FlexibleGraph>
 
             </div>);
     } else {
@@ -173,4 +179,13 @@ function ReactvisPlots ({cturl}) {
     }
 }
 
+function ReactvisPlots (initial_region) {
+    const [region,setRegion] = useState("US")
+    return (
+        <div>
+            <StateSelector region={region} setRegion={setRegion} />
+            <InternalReactvisPlots region={region}/>
+        </div>
+    )
+}
 export default ReactvisPlots;
