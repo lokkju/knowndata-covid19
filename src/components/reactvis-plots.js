@@ -2,12 +2,29 @@ import React,  { useState, useEffect }  from "react"
 
 import {timeParse,timeFormat} from "d3-time-format";
 import { format } from "d3-format";
-import {XYPlot, LineSeries, VerticalGridLines, HorizontalGridLines, XAxis, YAxis, Crosshair, makeVisFlexible} from 'react-vis';
-
+import {
+    XYPlot,
+    LineSeries,
+    VerticalGridLines,
+    HorizontalGridLines,
+    XAxis,
+    YAxis,
+    Crosshair,
+    makeVisFlexible,
+    ChartLabel
+} from 'react-vis';
+import states from "states-us/dist";
 import '../../node_modules/react-vis/dist/style.css';
-import StateSelector from "./us-region-selector";
+import {makeStyles} from "@material-ui/core/styles";
+import {fade} from "@material-ui/core";
 
-function InternalReactvisPlots ({region}) {
+const useStyles = makeStyles(theme => ({
+    regionNameLabel: {
+        fontSize: '1.6em'
+    }
+}));
+
+function ReactvisPlots ({region}) {
     const [crosshairValue, setCrosshairValue] = useState([]);
     const [data,setData] = useState([]);
     const [loaded,isLoaded] = useState(false);
@@ -16,10 +33,16 @@ function InternalReactvisPlots ({region}) {
     const displayFormat = timeFormat("%Y-%m-%d");
     const FlexibleGraph = makeVisFlexible(XYPlot);
 
+    const regionName = () => {
+        if( region === "US") {
+            return "United States";
+        } else {
+            return states.find(x => x.abbreviation === region).name
+        }
+    };
     useEffect( () => {
         let didCancel = false;
         let cturl = "https://covidtracking.com/api/us/daily";
-        console.log(region);
         if(region !== "" && region !== "US") {
             cturl = "https://covidtracking.com/api/states/daily?state=" + region;
         }
@@ -69,6 +92,13 @@ function InternalReactvisPlots ({region}) {
                     margin={{"bottom": 10, "top": 40}}
                     xType={"time"}
                 >
+                    <ChartLabel
+                        text={"Data for " + regionName()}
+                        className="region-name-label"
+                        xPercent={0.025}
+                        yPercent={0.25}
+                        includeMargin={false}
+                    />
                     <VerticalGridLines/>
                     <HorizontalGridLines/>
                     <XAxis
@@ -180,13 +210,4 @@ function InternalReactvisPlots ({region}) {
     }
 }
 
-function ReactvisPlots (initial_region) {
-    const [region,setRegion] = useState("US")
-    return (
-        <div>
-            <StateSelector region={region} setRegion={setRegion} />
-            <InternalReactvisPlots region={region}/>
-        </div>
-    )
-}
 export default ReactvisPlots;
