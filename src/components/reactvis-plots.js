@@ -11,20 +11,34 @@ import {
     YAxis,
     Crosshair,
     makeVisFlexible,
-    ChartLabel
+    ChartLabel, DiscreteColorLegend
 } from 'react-vis';
 import states from "states-us/dist";
 import '../../node_modules/react-vis/dist/style.css';
 import {makeStyles} from "@material-ui/core/styles";
-import {fade} from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
     regionNameLabel: {
-        fontSize: '1.6em'
+        '& text': {
+            fontSize: '1.4em !important',
+        }
+    },
+    legend: {
+        position: 'absolute',
+        top: '70px',
+        left: '60px',
+        padding: '5px',
+        fontSize: '12px',
+        border: '1px dashed',
+        textAlign: 'left',
+        '& div.rv-discrete-color-legend-item': {
+            padding: '0'
+        }
     }
 }));
 
 function ReactvisPlots ({region}) {
+    const classes = useStyles();
     const [crosshairValue, setCrosshairValue] = useState([]);
     const [data,setData] = useState([]);
     const [loaded,isLoaded] = useState(false);
@@ -32,7 +46,16 @@ function ReactvisPlots ({region}) {
     const parseFormat = timeParse("%Y%m%d");
     const displayFormat = timeFormat("%Y-%m-%d");
     const FlexibleGraph = makeVisFlexible(XYPlot);
-
+    const SERIES = [
+        {'title': '# Tested', 'color': '#6588cd'},
+        {'title': '# Positive', 'color': '#66b046'},
+        {'title': '# Hospitalized', 'color': '#a361c7'},
+        {'title': '# Deaths', 'color': '#76324a'},
+        {'title': '% Tested', 'color': '#ad953f'},
+        {'title': '% Positive', 'color': '#c75a87'},
+        {'title': '% Hospitalized', 'color': '#50909b'},
+        {'title': '% Deaths', 'color': '#cb6141'}
+    ];
     const regionName = (r) => {
         if( r === "US") {
             return "United States";
@@ -92,15 +115,15 @@ function ReactvisPlots ({region}) {
                     margin={{"bottom": 10, "top": 40}}
                     xType={"time"}
                 >
+                    <VerticalGridLines/>
+                    <HorizontalGridLines/>
                     <ChartLabel
                         text={"Data for " + regionName(region)}
-                        className="region-name-label"
+                        className={classes.regionNameLabel}
                         xPercent={0.025}
                         yPercent={0.25}
                         includeMargin={false}
                     />
-                    <VerticalGridLines/>
-                    <HorizontalGridLines/>
                     <XAxis
                         orientation={"top"}
                         tickFormat={tick => timeFormat("%m/%d")(tick)}
@@ -112,19 +135,24 @@ function ReactvisPlots ({region}) {
                         onNearestX={(value, {index}) => setCrosshairValue(data.map(d => d[index]))}
                         curve={'curveMonotoneX'}
                         data={data[0]}
+                        color={SERIES[0].color}
                     />
                     <LineSeries
                         curve={'curveMonotoneX'}
                         data={data[1]}
+                        color={SERIES[1].color}
                     />
                     <LineSeries
                         curve={'curveMonotoneX'}
                         data={data[2]}
+                        color={SERIES[2].color}
                     />
                     <LineSeries
                         curve={'curveMonotoneX'}
                         data={data[3]}
+                        color={SERIES[3].color}
                     />
+                    <DiscreteColorLegend items={SERIES} className={classes.legend} />
                     <Crosshair values={crosshairValue}
                                titleFormat={(v) => {
                                    return {"title": "Date", "value": displayFormat(v[0].x)}
@@ -155,6 +183,7 @@ function ReactvisPlots ({region}) {
                         onNearestX={(value, {index}) => setCrosshairValue(data.map(d => d[index]))}
                         curve={'curveMonotoneX'}
                         data={data[5]}
+                        color={SERIES[5].color}
                     />
                     <Crosshair values={crosshairValue}
                                titleFormat={(v) => {
@@ -186,10 +215,12 @@ function ReactvisPlots ({region}) {
                         onNearestX={(value, {index}) => setCrosshairValue(data.map(d => d[index]))}
                         curve={'curveMonotoneX'}
                         data={data[6]}
+                        color={SERIES[6].color}
                     />
                     <LineSeries
                         curve={'curveMonotoneX'}
                         data={data[7]}
+                        color={SERIES[7].color}
                     />
                     <Crosshair values={crosshairValue}
                                titleFormat={(v) => {

@@ -32,12 +32,11 @@ module.exports = {
     // To learn more, visit: https://gatsby.dev/offline
     //`gatsby-plugin-offline`,
     `gatsby-theme-material-ui`,
-    `gatsby-transformer-csv`,
     {
-      resolve: `gatsby-source-filesystem`,
+      resolve: `gatsby-plugin-google-analytics`,
       options: {
-        path: `${__dirname}/static`,
-        name: `data`,
+        // replace "UA-XXXXXXXXX-X" with your own Tracking ID
+        trackingId: "UA-246767-16",
       },
     },
   ],
