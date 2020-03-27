@@ -64,6 +64,7 @@ function ReactvisPlots ({region}) {
         }
     };
     useEffect( () => {
+        setError(null);
         let didCancel = false;
         let cturl = "https://covidtracking.com/api/us/daily";
         if(region !== "" && region !== "US") {
@@ -76,25 +77,28 @@ function ReactvisPlots ({region}) {
                     throw Error(response.statusText);
                 }
                 const json = await response.json();
-                console.log(json);
-                if (!didCancel) { // Ignore if we started fetching something else
+                if(json.error) {
+                    console.log(json);
+                    setError(json.message);
+                } else if (!didCancel) { // Ignore if we started fetching something else
                     const d = [
-                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.total}}),
+                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.totalTestResults}}),
                         json.map((n) => {return {"x": parseFormat(n.date), "y": n.positive}}),
                         json.map((n) => {return {"x": parseFormat(n.date), "y": n.hospitalized}}),
                         json.map((n) => {return {"x": parseFormat(n.date), "y": n.death}}),
-                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.total/347000000}}),
-                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.positive/n.total}}),
-                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.hospitalized/n.total}}),
-                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.death/n.total}}),
+                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.totalTestResults/347000000}}),
+                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.positive/n.totalTestResults}}),
+                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.hospitalized/n.totalTestResults}}),
+                        json.map((n) => {return {"x": parseFormat(n.date), "y": n.death/n.totalTestResults}}),
                     ];
                     setData(d);
-                    console.log(d);
                     isLoaded(true);
+                } else {
+                    console.log("request canceled");
                 }
             } catch (e) {
+                console.log(e)
                 setError(e)
-                console.log(e);
             }
         }
 
