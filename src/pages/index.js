@@ -14,13 +14,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-
-import Plotly from 'plotly.js-basic-dist'
-import {timeParse} from "d3-time-format";
-
-// customizable method: use your own `Plotly` object
-import createPlotlyComponent from 'react-plotly.js/factory';
-const Plot = createPlotlyComponent(Plotly);
+import ReactvisPlots from "../components/reactvis-plots";
 
 export const query = graphql`
 query {
@@ -73,7 +67,6 @@ function a11yProps(index) {
 const useStyles = makeStyles(theme => ({
     root: {
         flexGrow: 1,
-        width: '100%',
         backgroundColor: theme.palette.background.paper,
     },
 }));
@@ -86,14 +79,7 @@ function SimpleTabs({ data }) {
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
-    const epochFormat = timeParse("%s");
 
-    var global_data = data.allTimeSeriesCsv.edges;
-    var dates = global_data.map(function(node){ return epochFormat(node.node.seconds_since_Epoch)});
-    var tested = global_data.map(function(node){ return node.node.tested});
-    var ifr = global_data.map(function(node){ return node.node.deaths/node.node.positive});
-    var tfr = global_data.map(function(node){ return node.node.deaths/node.node.tested});
-    var ir = global_data.map(function(node){ return node.node.positive/node.node.tested});
     return (
         <div className={classes.root}>
             <AppBar position="static">
@@ -104,55 +90,7 @@ function SimpleTabs({ data }) {
                 </Tabs>
             </AppBar>
             <TabPanel value={value} index={0}>
-                <Plot
-                    data={[
-                        {
-                            x: dates,
-                            y: tested,
-                            yaxis: 'y2',
-                            mode: "scatter",
-                            fill: "tozeroy",
-                            name: "Tested"
-                        },
-                        {
-                            x: dates,
-                            y: ir,
-                            mode: "lines+markers",
-                            name: "% Positive"
-                        },
-                        {
-                            x: dates,
-                            y: tfr,
-                            mode: "lines+markers",
-                            name: "% fatal"
-                        },
-
-                    ]}
-                    layout={{
-                        title: 'COVID-19 Positives and Fatalities as a Percentage of People Tested',
-                        hovermode: 'closest',
-                        xaxis: {
-                            tickformat: '%Y-%m-%d %H:%M',
-                            "showspikes": true,
-                            "spikemode": "across",
-                            "spikedash": "solid",
-                            "spikecolor": "#000000",
-                            "spikethickness": 1
-                        },
-                        yaxis: {
-                            title: '',
-                            tickformat: '0.2%',
-                            range: [0,1]
-                        },
-                        yaxis2: {
-                            title: 'Total Tested',
-                            overlaying: 'y',
-                            side: 'right',
-                        }
-                    }}
-                    width={"900px"}
-                    height={"700px"}
-                />
+                <ReactvisPlots cturl={"https://covidtracking.com/api/us/daily"}/>
             </TabPanel>
             <TabPanel value={value} index={1}>
                 Item Two
