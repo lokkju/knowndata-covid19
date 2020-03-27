@@ -3,6 +3,7 @@ module.exports = {
     title: `COVID-19 Data Visualizations`,
     description: `Various data visualizations of COVID-19 data`,
     author: `@lokkju`,
+    image: `https://covid19.knowndata.org/static/site-image.png"`
   },
   plugins: [
     `gatsby-plugin-react-helmet`,

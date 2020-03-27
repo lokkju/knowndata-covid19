@@ -32,7 +32,7 @@ const IndexPage = ({ data }) => {
     const [regionTwo,setRegionTwo] = useState("WA")
     return (
         <Layout>
-            <SEO title="Home" />
+            <SEO title="COVID-19 Data Visualization" />
             <div className={classes.root}>
                 <Grid container spacing={3}>
                     <AppBar position="static">
