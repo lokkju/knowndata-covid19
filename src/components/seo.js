@@ -69,15 +69,15 @@ function SEO({ description, lang, meta, title, image }) {
           content: metaDescription,
         },
         {
-          name: "og:image",
+          property: "og:image",
           content: ogImage
         },
         {
-          name: "og:image:width",
+          property: "og:image:width",
           content: "1200"
         },
         {
-          name: "og:image:height",
+          property: "og:image:height",
           content: "630"
         }
 
