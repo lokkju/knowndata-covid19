@@ -8,7 +8,7 @@
     "@material-ui/core": "^4.9.7",
     "@nivo/line": "^0.61.1",
     "d3-time-format": "^2.2.3",
-    "gatsby": "^2.19.45",
+    "gatsby": "^2.32.13",
     "gatsby-image": "^2.2.44",
     "gatsby-plugin-google-analytics": "^2.2.2",
     "gatsby-plugin-manifest": "^2.2.48",
